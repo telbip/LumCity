@@ -37,3 +37,4 @@ tzlocal==5.2
 win32_setctime==1.2.0
 yarl==1.18.3
 zope.interface==7.2
+tgcrypto==1.2.5
