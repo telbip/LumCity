@@ -1,18 +1,17 @@
 import asyncio
 import random
-import string
+
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 from time import time, sleep
 from urllib.parse import unquote, quote
-import brotli
-import aiohttp
+
 import json
 import re
-from aiocfscrape import CloudflareScraper
+
 from curl_cffi import requests
 from aiohttp import ClientSession, ClientTimeout
-from aiohttp_proxy import ProxyConnector
+
 from better_proxy import Proxy
 from pyrogram import Client
 from pyrogram.errors import Unauthorized, UserDeactivated, AuthKeyUnregistered, FloodWait
@@ -20,7 +19,7 @@ from pyrogram.raw.functions.messages import RequestAppWebView
 from pyrogram.raw import types
 from bot.core.agents import generate_random_user_agent
 from bot.core.headers import headers, get_sec_ch_ua
-from bot.core.helper import format_duration
+
 
 from bot.utils import logger
 from bot.utils.logger import SelfTGClient

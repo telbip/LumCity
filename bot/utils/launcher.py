@@ -2,7 +2,7 @@ import os
 import glob
 import asyncio
 import argparse
-from itertools import cycle
+
 
 from pyrogram import Client
 from better_proxy import Proxy
