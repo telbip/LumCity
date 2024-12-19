@@ -165,7 +165,7 @@ class Tapper:
             else:
                 ref_id = random.choice(['boink1076726282', 'boink228618799', 'boink252453226'])
 
-            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 15, 15, 15], k=1)[0]
+            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 10, 10, 10], k=1)[0]
             peer = await self.tg_client.resolve_peer('boinker_bot')
             InputBotApp = types.InputBotAppShortName(bot_id=peer, short_name="boinkapp")
 
