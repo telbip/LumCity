@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     API_HASH: str
 
     USE_REF: bool = False
-    REF_ID: str = 'boink252453226'
+    REF_ID: str = 'boink1076726282'
 
     USE_RANDOM_DELAY_IN_RUN: bool = True
     RANDOM_DELAY_IN_RUN: list[int] = [5, 60]
