@@ -1,17 +1,18 @@
 import asyncio
 import random
-
+import string
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 from time import time, sleep
 from urllib.parse import unquote, quote
-
+import brotli
+import aiohttp
 import json
 import re
-
+from aiocfscrape import CloudflareScraper
 from curl_cffi import requests
 from aiohttp import ClientSession, ClientTimeout
-
+from aiohttp_proxy import ProxyConnector
 from better_proxy import Proxy
 from pyrogram import Client
 from pyrogram.errors import Unauthorized, UserDeactivated, AuthKeyUnregistered, FloodWait
@@ -19,7 +20,7 @@ from pyrogram.raw.functions.messages import RequestAppWebView
 from pyrogram.raw import types
 from bot.core.agents import generate_random_user_agent
 from bot.core.headers import headers, get_sec_ch_ua
-
+from bot.core.helper import format_duration
 
 from bot.utils import logger
 from bot.utils.logger import SelfTGClient
@@ -163,9 +164,9 @@ class Tapper:
             if settings.USE_REF == True:
                 ref_id = settings.REF_ID
             else:
-                ref_id = random.choice(['boink1076726282', 'boink228618799', 'boink252453226'])
+                ref_id = random.choice(['boink228618799', 'boink252453226'])
 
-            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 10, 10, 10], k=1)[0]
+            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 15, 15, 15], k=1)[0]
             peer = await self.tg_client.resolve_peer('boinker_bot')
             InputBotApp = types.InputBotAppShortName(bot_id=peer, short_name="boinkapp")
 
@@ -315,7 +316,6 @@ class Tapper:
                 await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
                 continue
 
-        self.error("Failed to claim booster after max retries.")
         return False
 
     async def spin_wheel_fortune(self, http_client, live_op, hash):
@@ -479,9 +479,19 @@ class Tapper:
                 fid = await self.find_id_by_key(user_data, "wheelOfFortune"), user_data['versionHash']
                 return fid
             except Exception as e:
+                try:
+                    # Попытаться извлечь содержимое ответа
+                    error_content = response.text()
+                    self.error(f"Error content: {error_content}")
+                except Exception as content_error:
+                    # Если не удалось извлечь содержимое
+                    self.error(f"Failed to get error content: {content_error}")
+
                 self.error(f"Error get liveOP attempt {retry_count + 1}: {e}")
+
                 if retry_count == settings.MAX_RETRIES - 1:
                     self.error(f"Unknown error during getting liveOP: <light-yellow>{e}</light-yellow>")
+
                 await asyncio.sleep(delay=random.randint(5, 10))
                 continue
         return None
@@ -845,7 +855,8 @@ class Tapper:
 
     async def check_proxy(self, http_client) -> None:
         try:
-            response = await http_client.get('https://ipinfo.io/json', headers={}, timeout=ClientTimeout(5))
+
+            response = await http_client.get('https://ipinfo.io/json', headers={}, timeout=5)
 
             response.raise_for_status()
             data = response.json()
@@ -871,7 +882,7 @@ class Tapper:
         http_client = requests.AsyncSession(impersonate="chrome110")
         http_client.headers.update(headers)
 
-        if proxy:
+        if settings.USE_PROXY_FROM_FILE:
             proxys = {
                 "http": proxy,
                 "https": proxy}  # Если прокси не нужны, оставьте пустым
@@ -916,6 +927,7 @@ class Tapper:
                 break
 
             try:
+                await asyncio.sleep(delay=2)
                 live_op ,hash = await self.get_liveOpId(http_client)
                 await asyncio.sleep(delay=2)
                 user_info = await self.get_user_info(http_client)
@@ -937,11 +949,15 @@ class Tapper:
                     last_claimed_time_str_x29 = user_info.get('boinkers', {}).get('booster', {}).get('x29', {}).get('lastTimeFreeOptionClaimed')
                     last_claimed_time_x29 = parser.isoparse(last_claimed_time_str_x29) if last_claimed_time_str_x29 else None
                     if not last_claimed_time_x29 or current_time > last_claimed_time_x29 + timedelta(hours=2, minutes=5):
+                        await asyncio.sleep(delay=2)
+
                         success = await self.claim_booster(http_client=http_client, spin=user_info['gamesEnergy']['slotMachine']['energy'], multiplier=29)
                         if success:
                             logger.success(f"<light-yellow>{self.session_name}</light-yellow> | 🚀 Claimed boost successfully 🚀")
                             await asyncio.sleep(delay=4)
                     if not last_claimed_time or current_time > last_claimed_time + timedelta(hours=2, minutes=5):
+                        await asyncio.sleep(delay=2)
+
                         success = await self.claim_booster(http_client=http_client, spin=user_info['gamesEnergy']['slotMachine']['energy'])
                         if success:
                             logger.success(f"<light-yellow>{self.session_name}</light-yellow> | 🚀 Claimed boost successfully 🚀")
@@ -967,11 +983,15 @@ class Tapper:
                         if fortune_user and 'gamesEnergy' in fortune_user and 'wheelOfFortune' in fortune_user['gamesEnergy']:
                             fortune_energy = fortune_user['gamesEnergy']['wheelOfFortune']['energy']
                             freespin = fortune_user['gamesEnergy']['wheelOfFortune']['freeEnergyUsed']
+
                             if fortune_energy > 0:
                                 for _ in range(fortune_energy):
+
+                                    await asyncio.sleep(delay=2)
                                     await self.spin_wheel_fortune(http_client, live_op,hash)
                                     await asyncio.sleep(delay=random.randint(2, 4))
                             elif freespin == 0:
+                                await asyncio.sleep(delay=2)
                                 await self.spin_wheel_fortune(http_client, live_op,hash)
                                 await asyncio.sleep(delay=random.randint(2, 4))
 
@@ -980,6 +1000,7 @@ class Tapper:
                         await asyncio.sleep(delay=4)
 
                     if settings.ENABLE_AUTO_TASKS:
+                        await asyncio.sleep(delay=2)
                         task = await self.perform_rewarded_actions(http_client=http_client)
                         await asyncio.sleep(delay=4)
 
