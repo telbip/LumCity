@@ -22,6 +22,8 @@
 |                Auto upgrade boinker                |     ✅     |
 |             Auto spin wheel of fortune             |     ✅     |
 |                 Auto Buy in events                 |     ✅     |
+|                   Auto Elevator                    |     ✅     |
+|              Check changes on server               |     ✅     |
 |           Support for pyrogram .session            |     ✅     |
 
 
