@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     API_HASH: str
 
     USE_REF: bool = False
-    REF_ID: str = 'boink1076726282'
+    REF_ID: str = 'boink252453226'
 
     USE_RANDOM_DELAY_IN_RUN: bool = True
     RANDOM_DELAY_IN_RUN: list[int] = [5, 60]
@@ -58,6 +58,8 @@ class Settings(BaseSettings):
          'twitterLikePost64',
          'twitterLikeShitcoinaire10',
          'regPalmPay1',
+        'playTrump',
+        'testJettonByProperty',
     ]
 
     USE_PROXY_FROM_FILE: bool = True
@@ -70,7 +72,8 @@ class Settings(BaseSettings):
     ENABLE_AUTO_SPIN: bool = True
     ENABLE_EVENTS: bool = True
     ENABLE_AUTO_UPGRADE: bool = True
-
+    ENABLE_AUTO_ELEVATOR: bool = True
+    ELEVATOR_MAX_LEVEL: int = 5
 
 settings = Settings()
 

@@ -7,7 +7,7 @@ headers = {
     'Connection': 'keep-alive',
     'Origin': 'https://boink.boinkers.co',
     'Accept-Encoding': 'gzip, deflate',
-    'Referer': 'https://boink.boinkers.co/daily-wheel',
+    'Referer': 'https://boink.boinkers.co/sluts',
     'Sec-Fetch-Dest': 'empty',
     'Sec-Fetch-Mode': 'cors',
     'Sec-Fetch-Site': 'same-origin',
