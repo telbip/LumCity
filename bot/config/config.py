@@ -58,8 +58,9 @@ class Settings(BaseSettings):
          'twitterLikePost64',
          'twitterLikeShitcoinaire10',
          'regPalmPay1',
-        'playTrump',
-        'testJettonByProperty',
+         'playTrump',
+         'testJettonByProperty',
+         'twitterPost2',
     ]
 
     USE_PROXY_FROM_FILE: bool = True

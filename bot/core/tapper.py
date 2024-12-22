@@ -162,9 +162,9 @@ class Tapper:
             if settings.USE_REF == True:
                 ref_id = settings.REF_ID
             else:
-                ref_id = random.choice(['boink228618799', 'boink252453226'])
+                ref_id = random.choice(['boink1076726282', 'boink228618799', 'boink252453226'])
 
-            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 15, 15, 15], k=1)[0]
+            self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 10, 10, 10], k=1)[0]
             peer = await self.tg_client.resolve_peer('boinker_bot')
             InputBotApp = types.InputBotAppShortName(bot_id=peer, short_name="boinkapp")
 
@@ -226,6 +226,7 @@ class Tapper:
 
             except Exception as e:
                 self.error(f"Error during login attempt {retry_count + 1}: {e}")
+                await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
                 if retry_count == settings.MAX_RETRIES - 1:
                     await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
                 continue
@@ -396,6 +397,7 @@ class Tapper:
         url = 'https://boink.boinkers.co/api/users/me?p=android'
         for retry_count in range(settings.MAX_RETRIES):
             try:
+                await asyncio.sleep(delay=2)
                 response = await http_client.get(url)
                 response.raise_for_status()
 
@@ -411,7 +413,7 @@ class Tapper:
         return None
 
     async def events(self, http_client):
-        await asyncio.sleep(delay=1)
+        await asyncio.sleep(delay=2)
         url = 'https://boink.boinkers.co/public/data/config?p=android'
 
         for retry_count in range(settings.MAX_RETRIES):
@@ -605,6 +607,7 @@ class Tapper:
 
         for retry_count in range(settings.MAX_RETRIES):
             try:
+               await asyncio.sleep(delay=2)
                response = await http_client.get(url)
                response.raise_for_status()
 
@@ -630,6 +633,7 @@ class Tapper:
         for retry_count in range(settings.MAX_RETRIES):
             try:
                 claimed_actions = await self._fetch_claimed_actions(http_client)
+                await asyncio.sleep(delay=2)
                 response = await http_client.get(url)
 
                 response.raise_for_status()
@@ -672,6 +676,7 @@ class Tapper:
                     if settings.AD_TASK_PREFIX.lower() in name_id.lower():
                         provider_id = action.get('verification', {}).get('paramKey', 'adsgram')
                         #print(f"ad task {name_id}")
+                        await asyncio.sleep(delay=2)
                         await self.handle_ad_task(http_client=http_client, name_id=name_id, provider_id=provider_id,action=action)
                         continue
 
@@ -919,7 +924,7 @@ class Tapper:
         access_token = None
         login_need = True
 
-        http_client = requests.AsyncSession(impersonate="chrome110")
+        http_client = requests.AsyncSession(impersonate="chrome124")
         http_client.headers.update(headers)
 
         if settings.USE_PROXY_FROM_FILE:
@@ -970,7 +975,7 @@ class Tapper:
                 await asyncio.sleep(delay=2)
                 live_op , hash = await self.get_liveOpId(http_client)
                 self.info(f"Hash - {hash}")
-                if hash != '1129095094':
+                if hash != '-990118650':
                     self.warning(f"Please STOP - NEED UPDATE")
                     break
                 await asyncio.sleep(delay=2)
