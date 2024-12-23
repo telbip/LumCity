@@ -74,7 +74,7 @@ class Settings(BaseSettings):
     ENABLE_EVENTS: bool = True
     ENABLE_AUTO_UPGRADE: bool = True
     ENABLE_AUTO_ELEVATOR: bool = True
-    ELEVATOR_MAX_LEVEL: int = 5
+    ELEVATOR_MAX_LEVEL: int = 3
 
 settings = Settings()
 

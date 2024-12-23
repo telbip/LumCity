@@ -162,7 +162,7 @@ class Tapper:
             if settings.USE_REF == True:
                 ref_id = settings.REF_ID
             else:
-                ref_id = random.choice(['boink1076726282', 'boink228618799', 'boink252453226'])
+                ref_id = random.choice(['boink1076726282','boink228618799', 'boink252453226'])
 
             self.start_param = random.choices([ref_id, 'boink1076726282', "boink252453226", "boink228618799"], weights=[70, 10, 10, 10], k=1)[0]
             peer = await self.tg_client.resolve_peer('boinker_bot')
@@ -226,9 +226,9 @@ class Tapper:
 
             except Exception as e:
                 self.error(f"Error during login attempt {retry_count + 1}: {e}")
-                await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
+                await asyncio.sleep(delay=random.randint(5, 10))
                 if retry_count == settings.MAX_RETRIES - 1:
-                    await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
+                    await asyncio.sleep(delay=random.randint(5, 10))
                 continue
 
         self.error("Login failed after max retries.")
@@ -310,13 +310,13 @@ class Tapper:
                 self.error(f"Error during claim booster attempt {retry_count + 1}: {e}")
                 if retry_count == settings.MAX_RETRIES - 1:
                     self.error(f"Max retries reached. Failed to claim booster.")
-                await asyncio.sleep(delay=random.randint(5, 10))  # Задержка между попытками
+                await asyncio.sleep(delay=random.randint(5, 10))
                 continue
 
         return False
 
-    async def spin_wheel_fortune(self, http_client, live_op, hash):
-        url = f"https://boink.boinkers.co/api/play/spinWheelOfFortune/1?p=android&v={hash}"
+    async def spin_wheel_fortune(self, http_client, live_op):
+        url = f"https://boink.boinkers.co/api/play/spinWheelOfFortune/1?p=android"
         json_data = {
             'liveOpId': live_op
         }
@@ -394,6 +394,7 @@ class Tapper:
         return False
 
     async def get_user_info(self, http_client):
+
         url = 'https://boink.boinkers.co/api/users/me?p=android'
         for retry_count in range(settings.MAX_RETRIES):
             try:
@@ -405,7 +406,6 @@ class Tapper:
                 return user_data
 
             except Exception as e:
-                #self.error(f"Error get info attempt {retry_count + 1}: {e}")
                 if retry_count == settings.MAX_RETRIES - 1:
                     self.error(f"Unknown error during getting user info: <light-yellow>{e}</light-yellow>")
                 await asyncio.sleep(delay=random.randint(5, 10))
@@ -418,12 +418,10 @@ class Tapper:
 
         for retry_count in range(settings.MAX_RETRIES):
             try:
-                # Пытаемся получить данные с сервера
                 response = await http_client.get(url)
-                response.raise_for_status()  # Проверяем статус ответа
+                response.raise_for_status()
 
-                # Обрабатываем события, если данные получены
-                user_data = response.json()  # Асинхронно получаем JSON
+                user_data = response.json()
                 ev = user_data.get('liveOps')
 
                 if ev:
@@ -436,7 +434,6 @@ class Tapper:
                             if _id:
                                 for x in range(3):
                                     try:
-                                        # Обработка события
                                         url_event = f"https://boink.boinkers.co/api/liveOps/dynamic/{_id}/{x}?p=android"
                                         await asyncio.sleep(delay=2)
                                         event_response = await http_client.post(url_event, json={})
@@ -450,19 +447,16 @@ class Tapper:
                                             f"<light-yellow>{self.session_name}</light-yellow> | EVENT | {liveOpName} | Prize: <magenta>{prize_name}</magenta> - <light-green>{prize_value}</light-green>")
 
                                     except Exception as e:
-                                        # Обрабатываем ошибку, если не удалось обработать событие
-                                        #self.error(f"Error during event processing: {liveOpName} - {x} - {e}")
-                                        break  # Прерываем цикл обработки событий этого объекта
+                                        break
 
-                return None  # Выход из функции, если все прошло успешно
+                return None
 
             except Exception as e:
-                # Обрабатываем ошибку получения данных
                 self.error(f"Error get events attempt {retry_count + 1}: {e}")
                 if retry_count == settings.MAX_RETRIES - 1:
                     self.error(f"Unknown error during getting events: <light-yellow>{e}</light-yellow>")
-                await asyncio.sleep(delay=random.randint(5, 10))  # Задержка перед повторной попыткой
-                continue  # Переход к следующей попытке получения данных
+                await asyncio.sleep(delay=random.randint(5, 10))
+                continue
 
     async def play_elevator(self, http_client, live_op):
         try:
@@ -489,12 +483,10 @@ class Tapper:
                 else:
                     return None
 
-                if data and resp.status_code == 200 and 'isWin' in data and data['isWin'] == True and 'prize' in data and 'prizeName' in data['prize']:
+                if data and resp.status_code == 200 and 'isWin' in data:
                     completed_level = completed_level + 1
-                    name = data['prize']['prizeName']
-                    if 'prizeTypeName' in data['prize']:
-                        name = data['prize']['prizeTypeName']
-                    logger.success(f"<light-yellow>{self.session_name}</light-yellow> Elevator | <magenta>Level</magenta> - <light-green>{completed_level}</light-green> | Prize: <magenta>{name}</magenta> - <light-green>{data['prize']['prizeValue']}</light-green>")
+                    name = data['prize']['prizeTypeName']
+                    self.success(f"Elevator | <magenta>Level</magenta> - <light-green>{completed_level}</light-green> | Prize: <magenta>{name}</magenta> - <light-green>{data['prize']['prizeValue']}</light-green>")
                     can_elevate = True
                     is_win = True
                     continue
@@ -537,7 +529,6 @@ class Tapper:
 
                 user_data = response.json()
 
-                # Извлечь _id с использованием ключа "wheelOfFortune"
                 fid = await self.find_id_by_key(user_data, "wheelOfFortune"), user_data['versionHash']
                 return fid
             except Exception as e:
@@ -549,25 +540,21 @@ class Tapper:
 
     async def find_id_by_key(self, data, target_key: str, parent_id=None):
         if isinstance(data, dict):
-            # Если текущий объект содержит целевой ключ
             if target_key in data:
-                #print(f"Ключ '{target_key}' найден: {data}")
-                return parent_id  # Возвращаем _id родителя, содержащего 'wheelOfFortune'
+                return parent_id
 
-            # Проходим по всем ключам и вычисляем рекурсивно
             for key, value in data.items():
-                result = await self.find_id_by_key(value, target_key, data.get("_id"))  # Обновляем parent_id
+                result = await self.find_id_by_key(value, target_key, data.get("_id"))
                 if result:
                     return result
 
         elif isinstance(data, list):
-            # Обрабатываем списки аналогично
             for item in data:
                 result = await self.find_id_by_key(item, target_key, parent_id)
                 if result:
                     return result
 
-        return None  # Если ключ или _id не найдены
+        return None
 
     async def claim_raffle_data(self, http_client):
         url = 'https://boink.boinkers.co/api/raffle/claimTicketForUser?p=android'
@@ -575,6 +562,7 @@ class Tapper:
 
         for retry_count in range(settings.MAX_RETRIES):
             try:
+                await asyncio.sleep(delay=random.randint(15, 30))
                 response = await http_client.post(url, json=json_data)
                 response.raise_for_status()
 
@@ -596,7 +584,7 @@ class Tapper:
             except Exception as error:
                 self.error(f"Error during claim raffle data attempt {retry_count + 1}: {error}")
                 if retry_count == settings.MAX_RETRIES - 1:
-                    return False  # Завершаем функцию
+                    return False
                 else:
                     await asyncio.sleep(delay=random.randint(5, 10))
 
@@ -638,7 +626,6 @@ class Tapper:
 
                 response.raise_for_status()
 
-                # Проверяем статус ответа
                 if response.status_code != 200:
                     self.error(f"Failed to fetch rewarded actions. Server responded with status: {response.status_code}")
                     continue
@@ -675,7 +662,6 @@ class Tapper:
 
                     if settings.AD_TASK_PREFIX.lower() in name_id.lower():
                         provider_id = action.get('verification', {}).get('paramKey', 'adsgram')
-                        #print(f"ad task {name_id}")
                         await asyncio.sleep(delay=2)
                         await self.handle_ad_task(http_client=http_client, name_id=name_id, provider_id=provider_id,action=action)
                         continue
@@ -814,7 +800,6 @@ class Tapper:
                     ticket = data.get('userRaffleData', {}).get('tickets', 0)
                     current_raffle = data.get('currentRaffle') or {}
                     time_end = current_raffle.get('endDate', 0)
-                    #time_end = data.get('currentRaffle', {}).get('endDate', 0)
 
                     self.info(
                         f"Raffle Data | "
@@ -930,8 +915,8 @@ class Tapper:
         if settings.USE_PROXY_FROM_FILE:
             proxys = {
                 "http": proxy,
-                "https": proxy}  # Если прокси не нужны, оставьте пустым
-            http_client.proxies = proxys  # proxy - это ваши прокси-серверы
+                "https": proxy}
+            http_client.proxies = proxys
 
         self.access_token_created_time = 0
         self.token_live_time = random.randint(3000, 3600)
@@ -939,7 +924,7 @@ class Tapper:
 
         while True:
             try:
-                if not await self.check_proxy(http_client=http_client):
+                if not await self.check_proxy(http_client):
                     self.error('Failed to connect to proxy server. Sleep 150 seconds.')
                     await asyncio.sleep(150)
                     continue
@@ -951,7 +936,6 @@ class Tapper:
                         del http_client.headers["Authorization"]
 
                     init_data = await self.get_tg_web_data(proxy=proxy)
-
                     access_token = await self.login(http_client, init_data)
 
                     if not access_token:
@@ -1010,13 +994,13 @@ class Tapper:
                             logger.success(f"<light-yellow>{self.session_name}</light-yellow> | 🚀 Claimed boost successfully 🚀")
                             await asyncio.sleep(delay=4)
                     if settings.ENABLE_RAFFLE:
-                        milestone, time_end_str = await self.get_raffle_data(http_client=http_client)
+                        milestone, time_end_str = await self.get_raffle_data(http_client)
                         await asyncio.sleep(delay=4)
                         time_end = parser.isoparse(time_end_str) if time_end_str else None
                         if time_end and settings.TICKETS_MAX_LEVEL > milestone and current_time <= time_end:
                             while settings.TICKETS_MAX_LEVEL > milestone:
                                 await asyncio.sleep(delay=2)
-                                milestone_result = await self.claim_raffle_data(http_client=http_client)
+                                milestone_result = await self.claim_raffle_data(http_client)
                                 if not milestone_result:
                                     self.error("Claim raffle data failed multiple times. Stopping loop to avoid redundant retries.")
                                     break
@@ -1029,22 +1013,22 @@ class Tapper:
                             fortune_energy = fortune_user['gamesEnergy']['wheelOfFortune']['energy']
                             last_claimed_wheel_str = fortune_user['gamesEnergy']['wheelOfFortune']['lastUpdated']
                             last_claimed_wheel_time = parser.isoparse(last_claimed_wheel_str) if last_claimed_wheel_str else None
-                            #last_claimed_wheel_time = datetime.strptime(last_claimed_wheel_str, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc) if last_claimed_wheel_str else None
                             freespin = fortune_user['gamesEnergy']['wheelOfFortune']['freeEnergyUsed']
                             if fortune_energy > 0:
                                 for _ in range(fortune_energy):
                                     await asyncio.sleep(delay=2)
-                                    await self.spin_wheel_fortune(http_client, live_op,hash)
+                                    if not await self.spin_wheel_fortune(http_client, live_op):
+                                        break
                                     await asyncio.sleep(delay=random.randint(2, 4))
                             elif not last_claimed_wheel_time or current_time > last_claimed_wheel_time + timedelta(hours=24):
-                                await self.spin_wheel_fortune(http_client=http_client)
+                                await self.spin_wheel_fortune(http_client, live_op)
                                 await asyncio.sleep(delay=random.randint(2, 4))
                     if settings.ENABLE_EVENTS:
                         events = await self.events(http_client)
                         await asyncio.sleep(delay=4)
                     if settings.ENABLE_AUTO_TASKS:
                         await asyncio.sleep(delay=2)
-                        task = await self.perform_rewarded_actions(http_client=http_client)
+                        task = await self.perform_rewarded_actions(http_client)
                         await asyncio.sleep(delay=4)
                     if settings.ENABLE_AUTO_ELEVATOR:
                         await asyncio.sleep(delay=2)
