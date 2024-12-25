@@ -374,7 +374,7 @@ class Tapper:
             http_client.proxies = proxys
 
         self.access_token_created_time = 0
-        self.token_live_time = random.randint(3000, 3600)
+        self.token_live_time = random.randint(4000, 4600)
         tries_to_login = 3
 
         while True:
@@ -389,7 +389,7 @@ class Tapper:
                 if login_need:
                     if "Authorization" in http_client.headers:
                         del http_client.headers["Authorization"]
-
+                    self.info(f"Authorization")
                     init_data = await self.get_tg_web_data(proxy=proxy)
                     #await asyncio.sleep(delay=2000)
                     access_token = await self.login(http_client, init_data)
@@ -399,7 +399,7 @@ class Tapper:
                     http_client.headers['Authorization'] = f"Bearer {access_token}"
 
                     self.access_token_created_time = time()
-                    self.token_live_time = random.randint(500, 900)
+                    self.token_live_time = random.randint(1500, 1900)
 
 
                     login_need = False
