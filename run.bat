@@ -32,7 +32,7 @@ if not exist .env (
 
 if not exist .git (
 	git init
-	git remote add origin git@github.com:telbip/Boinker.git
+	git remote add origin git@github.com:telbip/LumCity.git
 )
 
 ::Обновление локального репозитория без удаления изменений

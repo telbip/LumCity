@@ -36,6 +36,6 @@ async def main():
     await process()
 
 if __name__ == '__main__':
-    set_window_title('Boinker')
+    set_window_title('LumCity')
     with suppress(KeyboardInterrupt):
         asyncio.run(main())

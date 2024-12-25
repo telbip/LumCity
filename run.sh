@@ -32,7 +32,7 @@ fi
 
 if [ ! -f ".git" ]; then
   git init
-  git remote add origin git@github.com:telbip/Boinker.git
+  git remote add origin git@github.com:telbip/LumCity.git
 fi
 
 #Обновление локального репозитория без удаления изменений
